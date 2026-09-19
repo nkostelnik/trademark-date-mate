@@ -1,23 +1,76 @@
-# TrademarkMate
+# Trademark Date Mate
 
-A small React + Vite tool that estimates a USPTO trademark application timeline. Pick a
-filing date and see three scenario projections side by side:
+A small tool that estimates a USPTO trademark application timeline. Pick a filing date and see
+scenario projections side by side (by default: no issues, minor office action, substantive
+office action), each with milestone dates through registration.
 
-- **No Issues (Smooth Sailing)** - straight through to registration, ~14 months.
-- **Minor Office Action** - a resolvable issue (disclaimer, goods/services clarification), ~18 months.
-- **Substantive Office Action** - a major issue (likelihood of confusion, descriptiveness), ~24 months.
+Built to be embedded on a law firm's website, with the firm's own colors, wording and timelines.
 
-Each card shows the milestone dates (examiner assignment, office action response, publication,
-registration) computed from the chosen filing date.
+## Embed it on a website
 
-## Stack
+Paste this where the estimator should appear (works on WordPress, Squarespace, Wix, plain HTML):
 
-- React 19 + TypeScript + Vite
-- Tailwind CSS v4 (`@tailwindcss/vite`)
-- `date-fns` for date math/formatting
-- `motion` for card/timeline entrance animation
-- `lucide-react` for icons
-- `clsx` + `tailwind-merge` (via `src/lib/utils.ts#cn`) for conditional class names
+```html
+<script src="https://nkostelnik.github.io/trademark-date-mate/embed.js"></script>
+```
+
+The script inserts an iframe and resizes it to fit its content. Prefer a plain iframe? Use:
+
+```html
+<iframe src="https://nkostelnik.github.io/trademark-date-mate/?embed=1"
+        title="Trademark timeline estimator" style="width:100%;height:1250px;border:0"></iframe>
+```
+
+(A plain iframe needs a fixed height; the script version sizes itself.)
+
+## Configuration
+
+Every option is a URL parameter. With `embed.js`, use `data-` attributes instead:
+
+```html
+<script src="https://nkostelnik.github.io/trademark-date-mate/embed.js"
+        data-accent="#1d4ed8"
+        data-title="Smith &amp; Co IP"
+        data-disclaimer="Estimates only. Contact us for advice on your matter."></script>
+```
+
+| Option | Values | Notes |
+| --- | --- | --- |
+| `accent` | hex color, e.g. `#1d4ed8` | Icon and focus color |
+| `theme` | `light`, `dark`, `auto` | Default `light` when embedded, `auto` standalone |
+| `title`, `intro` | text | Shown on the standalone page only (embeds have no header) |
+| `logo` | `https://` image URL | Replaces the icon on the standalone page |
+| `disclaimer` | text | Replaces the footer disclaimer (it cannot be hidden) |
+| `scenarios` | JSON array (see below) | Override or add scenarios |
+| `config` | `https://` URL to a JSON file | Same options as a file you host; URL/data options win over the file |
+| `embed` | `1` | Embed mode (set automatically by `embed.js`) |
+
+### Changing the timelines
+
+`scenarios` is a JSON array. Entries whose `id` matches a default (`smooth`, `minor`,
+`substantive`) only need the fields you want to change; new ids need `title`, `description` and
+`estimatedMonths`. `color` is `stone`, `amber` or `rose`. Milestones are `{ "label", "monthOffset" }`
+with offsets in months from the filing date.
+
+```json
+{
+  "accent": "#1d4ed8",
+  "scenarios": [
+    { "id": "smooth", "estimatedMonths": 12 },
+    { "id": "opposition", "title": "Opposition", "description": "A third party opposes.",
+      "estimatedMonths": 36, "color": "rose",
+      "milestones": [{ "label": "Opposition filed", "monthOffset": 13 }] }
+  ]
+}
+```
+
+Host that as a JSON file (with CORS enabled) and point `config` / `data-config` at it. Invalid
+values are ignored and fall back to defaults. Limits: 6 scenarios, up to 120 months.
+
+## Self-hosting
+
+`npm run build` produces a static `dist/` folder with relative paths; upload it anywhere. The
+included GitHub Actions workflow deploys `main` to GitHub Pages.
 
 ## Develop
 
@@ -26,14 +79,19 @@ npm install
 npm run dev
 ```
 
-## Build
+`public/example.html` is a mock law-firm page with the embed on it.
 
-```bash
-npm run build
-```
+## Stack
 
-## Notes
+React 19, TypeScript, Vite, Tailwind CSS v4, `date-fns`, `motion`, `lucide-react`, `clsx`,
+`tailwind-merge`.
 
-The estimates in `src/services/trademarkService.ts` (`SCENARIOS`) are rough, commonly-cited
-USPTO timeframes, not legal advice or a guarantee - actual pendency varies by class, art unit,
-and case-specific issues.
+## Disclaimer
+
+The default timelines are rough, commonly cited USPTO timeframes, not legal advice or a
+guarantee. Actual pendency varies by class, art unit and case-specific issues. Firms should
+review the timelines and disclaimer text before publishing.
+
+## License
+
+MIT

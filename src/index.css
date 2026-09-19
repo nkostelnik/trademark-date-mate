@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Theme is driven by a .dark class (set from the `theme` option) instead of the OS setting alone. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
 }

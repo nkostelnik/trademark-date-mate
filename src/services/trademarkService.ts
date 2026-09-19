@@ -59,8 +59,11 @@ export interface CalculationResult {
   milestones: { label: string; formattedDate: string }[];
 }
 
-export const calculateTrademarkDates = (filingDate: Date): CalculationResult[] => {
-  return SCENARIOS.map((scenario) => {
+export const calculateTrademarkDates = (
+  filingDate: Date,
+  scenarios: TrademarkScenario[] = SCENARIOS,
+): CalculationResult[] => {
+  return scenarios.map((scenario) => {
     const estimatedDate = addMonths(filingDate, scenario.estimatedMonths);
     const milestones = scenario.milestones.map((m) => ({
       label: m.label,
