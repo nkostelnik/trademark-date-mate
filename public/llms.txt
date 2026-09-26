@@ -1,0 +1,7 @@
+# Trademark Date Mate
+
+> Estimate your USPTO trademark registration timeline from a filing date, under three examination scenarios (fast, typical, and slow). Free, embeddable white-label widget for law firm websites.
+
+## Primary page
+- [Trademark Date Mate](https://nkostelnik.github.io/trademark-date-mate/): the timeline estimator tool.
+- [Embed example](https://nkostelnik.github.io/trademark-date-mate/example.html): how to embed the widget on another site.
